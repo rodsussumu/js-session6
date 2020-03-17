@@ -7,14 +7,32 @@ function rand(min, max) {
 function esperaAi(msg, tempo) {
     return new Promise((resolve, reject )=> {
         setTimeout(() => {
-            resolve(msg);
+            if(typeof msg !== 'string') {
+                reject('CAI NO ERRO');
+                return;
+            }
+
+            resolve(msg.toLocaleUpperCase() + 'PASSEI DA PROMISE');
+            return;
         }, tempo)
     });
 }
 
-esperaAi('Frase 1', rand(1, 3)).then(resposta =>{
-    console.log(resposta)
-    return esperaAi('Frase 2', rand(1, 3)).then(resposta => {
-        console.log(resposta)
-    })
-}).catch();
+// Promise.all -> tenta resolver todas
+// Promise.race -> tenta resolver e devolve a primeira que for resolvida
+// Promise.resolve -> entrega promise resolvida
+// Promise.reject -> entreja rejeitada e sempre cai no catch
+
+const promises = [
+    esperaAi('Promise 1', rand(1, 5)),
+    esperaAi('Promise 2', rand(1, 5)),
+    esperaAi('Promise 3', rand(1, 5)),
+    esperaAi(1000, rand(1, 5)),
+]
+
+Promise.race(promises)
+    .then(function(valor) {
+        console.log(valor);
+}).catch(function(erro){
+        console.log(erro);
+})
